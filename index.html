@@ -8,18 +8,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- デザイン設定 (CSS) --- */
+        /* 全要素のサイズ計算統一 */
+        * { box-sizing: border-box; }
+
+        /* 基本設定 */
         :root { --primary: #38bdf8; --secondary: #2563eb; --dark-bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); }
-        body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; background-color: var(--dark-bg); color: white; overflow-x: hidden; line-height: 1.6; }
+        body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; background-color: var(--dark-bg); color: white; overflow-x: hidden; line-height: 1.6; position: relative; }
         a { text-decoration: none; color: inherit; }
 
-        /* 背景エフェクト */
-        .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
-        .orb { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; top: -100px; right: -100px; animation: pulse 8s infinite alternate; pointer-events: none; }
+        /* --- 背景レイヤー設定 --- */
+        /* 1. グラデーション背景 (一番奥) */
+        .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
+        
+        /* 2. イラストの透かし配置 (その手前) ★追加部分 */
+        .bg-illustration {
+            position: fixed; z-index: -5; opacity: 0.04; /* ←透明度：数字を上げると濃くなります */
+            pointer-events: none; background-repeat: no-repeat; background-size: contain;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+        /* 佐賀県シルエット（左下） */
+        .illustration-saga {
+            bottom: 5%; left: 2%; width: 35vw; height: 35vw; max-width: 500px; max-height: 500px;
+            /* デフォルメした佐賀県のSVGデータ */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cpath fill='white' d='M759.2 261.8c-5.5-8.3-18.4-15.1-36.1-19.8-14.1-3.8-24.7-10.8-31.3-21.1-7.8-12.1-22.3-16.4-35.8-11.9-8.9 2.9-16.3 8.3-21.8 15.6-8.5 11.4-24 14.8-36.5 8.3-11.9-6.2-18.7-19.5-16.4-32.6 1.8-10.2 9.4-18.6 19.3-22.1 12.6-4.4 20.9-16.3 20.9-29.7 0-6.1-1.8-12.2-5.3-17.4-7.6-11.6-22-16.6-35.3-12.8-12.9 3.6-21.8 15.5-21.8 28.9 0 5.3-1.4 10.5-4.1 15.1-6 10.2-18.6 13.8-29.1 8.6-9.8-4.9-15.7-15.1-15.3-26.1.4-9.7 5.3-18.3 13.5-23.6 8.1-5.3 12.9-14.4 12.9-24.1 0-14.7-10.9-27.3-25.6-28.7-15.5-1.5-28.7 10.6-28.7 25.9 0 11.3-7.2 21.5-18 24.9-11.1 3.5-23.1-1.4-28.9-11.6-5.9-10.5-18.6-14.5-29.6-9.4-10.7 4.9-17.2 16.1-16.4 27.8.6 9.1 5.4 17.1 13.1 22.5 10.5 7.3 15.7 20.3 13.1 32.9-2.2 10.9-11.3 19.3-22.4 20.6-12.1 1.4-23.3-5.9-27.6-17.2-4.6-12-17.7-18.3-30.1-14.3-11.8 3.8-19.6 15.1-18.9 27.5.5 8.6 4.7 16.2 11.6 21.6 9.6 7.6 13.9 20.2 10.9 32.2-2.9 11.8-13.2 20.6-25.3 21.3-12.8.8-23.9-7.7-27-19.9-3.4-13.4-17.4-21.3-30.8-17.9-12.2 3.1-20.5 14.2-20.1 26.8.3 8.3 4.2 15.8 10.7 21.2 12.3 10.2 16.3 27.5 9.3 41.9-5.3 10.8-16.6 17.4-28.7 16.8-12.8-.6-23.3-10-25-22.6-2-14.7-16-24.4-30.7-21.7-12.5 2.3-21.8 12.7-22.7 25.4-1 12.9 7.6 24.9 19.8 27.9 11.1 2.8 19.4 12.3 21.2 23.6 2 12.3-3.7 24.6-14.3 30.3-10 5.4-15.9 16.4-14.7 27.7 1.1 11 9.4 19.9 20.3 21.9 14.1 2.6 23.9 15.6 22.6 29.8-1.2 12.8-10.8 23-23.6 24.7-13.1 1.7-25.2-6.5-28.4-19.2-3-12.3-15.6-19.9-28.2-17.2-12.7 2.7-21.5 14-21.3 27 .3 11.5 8.2 21.4 19.3 24.1 10.5 2.6 18.5 11.4 20.4 22.1 2 10.7-.2 21.9-6.2 30.3-5.7 7.9-13.6 18.9-15.4 27.5-2.4 11.3 3.7 22.6 14.2 26.7 10.4 4 22.1 1.3 29.3-6.9 8.6-9.7 21.7-13.8 34.2-10.9 12.3 2.9 21.4 12.9 22.9 25.4 1.8 14.5 14.8 24.9 29.2 23.6 12.7-1.2 22.5-11.2 23.6-23.9.9-11-5.6-21.7-15.6-26.1-10.5-4.6-17.1-15.6-16.3-27.1.7-10.4 7.8-19.1 17.8-21.7 13.8-3.5 23-17.4 21-31.4-1.7-11.8-11.1-21.1-22.8-23.1-15.1-2.6-25.7-15.7-24.8-30.9.8-11.3 7.7-21.3 18.1-25.6 13.2-5.5 20.4-20.7 16.1-34.3-3.7-11.6-13.9-19.9-26-20.8-15.7-1.2-27.9-13.3-28.4-28.9-.5-14.5 9.4-27.5 23.5-30.7 14.2-3.2 23.9-16.5 22.6-31-.9-10.1-6.7-18.9-15.6-23.7-12.8-6.9-19.6-22-16.7-36.2 2.6-12.5 13.2-21.9 26-22.6 13.8-.8 25.4-10.9 27.3-24.5 2.3-16.2-8.5-31.5-24.3-34.9-10.5-2.3-18.5-10.4-20.6-21-2.4-11.9 3.6-24.1 14.6-29.4 11.4-5.5 18.3-17.9 17-30.6-.9-9.9-6.5-18.7-15-23.7-10.5-6.1-17.3-17.5-17.3-29.7 0-14.7 11.3-26.9 25.9-27.7 12.3-.7 22.7 6.5 27.2 17.8 4.2 10.6 14.3 17.5 25.7 17.5h.2c15.8 0 28.7-12.8 28.7-28.7 0-11.3-6.5-21.5-16.8-26.4-11.7-5.6-19-17.9-18.2-30.8.7-11 7.4-20.4 17.6-24.2 12.3-4.6 19.9-17.2 18.7-30.3-1.1-11.2-8.5-20.7-18.9-24.4-12.1-4.3-19.8-16.6-19.3-29.4.5-12.9 9.6-23.9 22.2-26.6 12.4-2.7 21.2-13.7 21.2-26.4 0-13.9-10.4-25.8-24.2-27.4-11.4-1.4-20.4-9.6-22.9-20.7-2.3-9.9.8-20.3 8.3-27.4 8.1-7.6 11.9-18.8 9.9-29.7-1.6-9.2-8-16.8-16.8-19.7z'/%3E%3C/svg%3E");
+        }
+        /* 心臓のイラスト（右上） */
+        .illustration-heart {
+            top: 8%; right: 2%; width: 30vw; height: 30vw; max-width: 400px; max-height: 400px;
+            /* シンプルな心臓と心電図のSVGデータ */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='none' stroke='white' stroke-width='15' d='M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z'%2F%3E%3Cpath fill='none' stroke='white' stroke-width='15' stroke-linecap='round' stroke-linejoin='round' d='M128 256h64l32-96 64 192 64-96h32'/%3E%3C/svg%3E");
+        }
+
+        /* 3. 動くオーブ (最前面の背景) */
+        .orb { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; top: -100px; right: -100px; animation: pulse 8s infinite alternate; pointer-events: none; z-index: -1; }
         @keyframes pulse { 0% { transform: scale(1); opacity: 0.3; } 100% { transform: scale(1.2); opacity: 0.6; } }
 
-        /* ヘッダー */
-        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); position: fixed; width: 90%; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* ヘッダー（固定） */
+        header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .logo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: white; }
         .logo i { color: var(--primary); margin-right: 8px; }
 
@@ -47,22 +72,18 @@
         .card h3 { margin: 0 0 10px 0; font-size: 1.3rem; }
         .card p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px; }
         
-        /* 埋め込み用エリア (Googleカレンダー等のプレースホルダー) */
-        .embed-container { position: relative; padding-bottom: 75%; height: 0; overflow: hidden; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); margin-top: 15px; }
-        .embed-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        
         /* フッター */
         footer { text-align: center; padding: 50px 20px; color: #475569; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
-
     <div class="bg-gradient"></div>
+    <div class="bg-illustration illustration-saga"></div>
+    <div class="bg-illustration illustration-heart"></div>
     <div class="orb"></div>
-
     <header>
         <div class="logo"><i class="fa-solid fa-heart-pulse"></i> SAGA ECHO HUB</div>
-        </header>
+    </header>
 
     <section class="hero">
         <h1 class="fade-in">心エコーの未来を、<br>佐賀から拓く。</h1>
@@ -70,9 +91,9 @@
             技術向上と知識の共有。<br>医師・技師がつながるための新しいラーニングハブ。
         </p>
         <div class="fade-in delay-2">
-            <button class="btn-glow" onclick="window.open('https://drive.google.com/drive/folders/1rwDZwNR4aGwF_JUzrZm5EmjTjWa39uWy?usp=drive_link', '_blank')">
+            <a href="https://drive.google.com/drive/folders/1rwDZwNR4aGwF_JUzrZm5EmjTjWa39uWy?usp=drive_link" target="_blank" class="btn-glow">
                 <i class="fa-solid fa-lock"></i> 抄読会の部屋へ入室 🔒
-        </button>
+            </a>
         </div>
     </section>
 
