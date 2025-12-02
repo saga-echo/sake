@@ -19,10 +19,23 @@
         /* --- 背景レイヤー設定 --- */
         .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
         
+        /* 透かしアイコンの共通設定 */
         .watermark {
             position: fixed; z-index: -5; color: white; opacity: 0.06; pointer-events: none;
         }
-        .watermark-left { bottom: -5vw; left: -5vw; font-size: 40vw; transform: rotate(10deg); }
+        
+        /* 左下：セクタープローブのイラスト（★ここを変更） */
+        .watermark-probe {
+            bottom: -10vw; left: -10vw;
+            width: 50vw; height: 50vw; /* FontAwesomeではないのでサイズ指定が必要 */
+            /* セクタープローブのSVGデータURI */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M160 32h192l-32 96h48v320c0 35.3-28.7 64-64 64H208c-35.3 0-64-28.7-64-64V128h48L160 32z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: contain;
+            transform: rotate(20deg); /* 角度を調整 */
+        }
+
+        /* 右上：心臓アイコン（FontAwesomeのまま） */
         .watermark-right { top: -10vw; right: -10vw; font-size: 45vw; transform: rotate(-15deg); }
 
         .orb { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; top: -100px; right: -100px; animation: pulse 8s infinite alternate; pointer-events: none; z-index: -1; }
@@ -34,7 +47,7 @@
         .logo i { color: var(--primary); margin-right: 8px; }
 
         /* メインビジュアル */
-        .hero { min-height: 80vh; /* 少し高さを詰めました */ display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 0; position: relative; }
+        .hero { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 0; position: relative; }
         h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px 0; font-weight: 700; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.05em; }
         .subtitle { font-size: 1.1rem; color: #94a3b8; max-width: 600px; margin-bottom: 40px; }
 
@@ -51,26 +64,20 @@
         .section { padding: 60px 5%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 1.5rem; margin-bottom: 30px; border-left: 4px solid var(--primary); padding-left: 15px; display: flex; align-items: center; gap: 10px; }
         
-        /* カレンダーセクション (独立させて大きく表示) */
+        /* カレンダーセクション */
         .calendar-section { width: 100%; margin-bottom: 40px; }
         .calendar-container {
-            position: relative;
-            width: 100%;
-            height: 600px; /* ★ここで高さを強制的に確保 */
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.3);
+            position: relative; width: 100%; height: 600px;
+            border-radius: 20px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .google-calendar {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%; border: 0;
-            /* ダークモード化フィルター (全角スペース除去済み) */
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
             filter: invert(1) hue-rotate(180deg) contrast(0.9) saturate(0.8);
         }
 
-        /* 下部のグリッド（アーカイブとお知らせ） */
+        /* 下部のグリッド */
         .grid-2-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .card { background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; height: 100%; }
         .card:hover { transform: translateY(-5px); border-color: rgba(56, 189, 248, 0.5); background: rgba(255, 255, 255, 0.08); }
@@ -85,8 +92,9 @@
 <body>
 
     <div class="bg-gradient"></div>
-    <i class="fa-solid fa-map-location-dot watermark watermark-left"></i>
-    <i class="fa-solid fa-heart-pulse watermark watermark-right"></i>
+    
+    <div class="watermark watermark-probe"></div> <i class="fa-solid fa-heart-pulse watermark watermark-right"></i>
+    
     <div class="orb"></div>
 
     <header>
@@ -99,14 +107,13 @@
             技術向上と知識の共有。<br>医師・技師がつながるための新しいラーニングハブ。
         </p>
         <div class="fade-in delay-2">
-            <a href="https://drive.google.com/drive/folders/1rwDZwNR4aGwF_JUzrZm5EmjTjWa39uWy?usp=drive_link" target="_blank" class="btn-glow">
+            <a href="https://drive.google.com/drive/folders/1rwDZwNR4aGwF_JUzrZm5EmjTjWa39uWy?usp=drive_link" target="_blank" class="btn-glow" target="_blank" class="btn-glow">
                 <i class="fa-solid fa-lock"></i> 抄読会の部屋へ入室 🔒
             </a>
         </div>
     </section>
 
     <section class="section fade-in delay-3">
-        
         <div class="calendar-section">
             <div class="section-title"><i class="fa-regular fa-calendar-check"></i> Schedule / Web Meeting</div>
             <div class="calendar-container">
@@ -139,7 +146,6 @@
                 </div>
             </div>
         </div>
-
     </section>
 
     <footer>
