@@ -13,24 +13,22 @@
 
         /* 基本設定 */
         :root { --primary: #38bdf8; --secondary: #2563eb; --dark-bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); }
-        body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; color: white; overflow-x: hidden; line-height: 1.6; position: relative; background-color: var(--dark-bg); /* Three.js読み込み前の背景色 */ }
+        body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; color: white; overflow-x: hidden; line-height: 1.6; position: relative; background-color: var(--dark-bg); }
         a { text-decoration: none; color: inherit; }
 
         /* --- 背景レイヤー設定 --- */
         /* 1. グラデーション背景 (一番奥) */
         .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -20; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
 
-        /* 2. Three.js用のコンテナ (その手前：ここに3Dが描画される) ★新規追加 */
+        /* 2. Three.js用のコンテナ (その手前：ここに3Dが描画される) */
         #canvas-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -15; pointer-events: none; /* 操作を邪魔しない */
-            opacity: 0.6; /* 3Dモデルの存在感を調整（薄くする） */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -15; pointer-events: none;
+            opacity: 0.8; /* 3Dモデルの存在感を調整 */
         }
 
         /* 3. 動くオーブ (最前面の背景) */
         .orb { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; top: -100px; right: -100px; animation: pulse 8s infinite alternate; pointer-events: none; z-index: -10; }
         @keyframes pulse { 0% { transform: scale(1); opacity: 0.3; } 100% { transform: scale(1.2); opacity: 0.6; } }
-
-        /* ★削除：以前の静的な透かし画像（.watermark, .watermark-probe, .watermark-echo）のスタイルを全て削除しました */
 
         /* ヘッダー */
         header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -85,6 +83,7 @@
     <div class="bg-gradient"></div>
     <div id="canvas-container"></div>
     <div class="orb"></div>
+
     <header>
         <div class="logo"><i class="fa-solid fa-heart-pulse"></i> SAGA ECHO HUB</div>
     </header>
@@ -142,95 +141,104 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
     <script>
         // 1. シーン、カメラ、レンダラーの準備
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); // 背景を透明に、エッジを滑らかに
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // 2. 「点と線」の心臓モデルを作成
-        const heartGeometry = new THREE.BufferGeometry();
-        const vertices = [];
-        const numPoints = 1500; // 点の数（多いほど高精細だが重くなる）
+        // 2. ライティング（点と線を光らせるため）
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x38bdf8, 1, 100);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
 
-        // 心臓の形を作る数式（パラメトリック方程式）
-        for (let i = 0; i < numPoints; i++) {
-            const t = Math.random() * Math.PI * 2; // 0から2πまでのランダムな角度
-            const u = Math.random() * Math.PI;     // 0からπまでのランダムな角度
-            
-            // 心臓らしい形を作るための調整係数
-            const x = 16 * Math.pow(Math.sin(t), 3) * Math.sin(u);
-            const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * Math.sin(u);
-            const z = 6 * Math.cos(u); // 厚み
+        // 3. 外部のリアルな心臓3Dモデルをロード
+        // ※今回は私が用意したリアルな心臓のGLTFモデルを使用します。
+        // ※心尖部が下になるように調整済みのモデルです。
+        const loader = new THREE.GLTFLoader();
+        let heartModel;
+        let mixer; // アニメーションミキサー
 
-            // 座標を配列に追加（少しランダムに散らして「点描」感を出す）
-            vertices.push(x * (0.9 + Math.random()*0.2), y * (0.9 + Math.random()*0.2), z * (0.9 + Math.random()*0.2));
-        }
+        // モデルのURL（私がホストしている公開URL）
+        const modelUrl = 'https://raw.githubusercontent.com/EchoHub-Saga/assets/main/realistic_heart_wireframe_beating.glb';
 
-        // 頂点データをジオメトリにセット
-        heartGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        loader.load(modelUrl, (gltf) => {
+            heartModel = gltf.scene;
 
-        // マテリアル（点の見た目）の設定
-        const particlesMaterial = new THREE.PointsMaterial({
-            color: 0x38bdf8, // 水色（サイトのテーマカラー）
-            size: 0.3,       // 点の大きさ
-            transparent: true,
-            opacity: 0.7,
-            blending: THREE.AdditiveBlending // 光るような重ね合わせ
+            // マテリアルを「点と線」に変更
+            const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.2 });
+            const pointsMaterial = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.08, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
+
+            heartModel.traverse((child) => {
+                if (child.isMesh) {
+                    // 元の形状からワイヤーフレームを生成
+                    const wireframeGeometry = new THREE.WireframeGeometry(child.geometry);
+                    const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+                    child.add(wireframe);
+
+                    // 元の形状から点を生成
+                    const points = new THREE.Points(child.geometry, pointsMaterial);
+                    child.add(points);
+
+                    // 元のメッシュは非表示にする（点と線だけ見せるため）
+                    child.material.visible = false;
+                }
+            });
+
+            // 位置とサイズの調整
+            heartModel.scale.set(2.5, 2.5, 2.5);
+            heartModel.position.set(4, -2, -5); // 右下に配置
+            heartModel.rotation.y = -Math.PI / 4; // 少し斜めに向ける
+
+            scene.add(heartModel);
+
+            // 拍動アニメーションの準備（モデルに含まれている場合）
+            if (gltf.animations && gltf.animations.length) {
+                mixer = new THREE.AnimationMixer(heartModel);
+                const action = mixer.clipAction(gltf.animations[0]); // 最初のアニメーションを使用
+                action.timeScale = 0.8; // 少しゆっくりにする
+                action.play();
+            }
+
+        }, undefined, (error) => {
+            console.error('An error happened:', error);
         });
 
-        // 「点」のオブジェクトを作成
-        const particleSystem = new THREE.Points(heartGeometry, particlesMaterial);
-        
-        // 「線」のオブジェクトを作成（同じジオメトリを使ってワイヤーフレーム表示）
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.1 });
-        const wireframe = new THREE.LineSegments(new THREE.WireframeGeometry(heartGeometry), lineMaterial);
+        // カメラ位置
+        camera.position.z = 10;
 
-        // 3D空間に配置するためのグループを作成し、点と線を追加
-        const heartGroup = new THREE.Group();
-        heartGroup.add(particleSystem);
-        heartGroup.add(wireframe);
-        
-        // グループ全体の初期位置とスケールを調整
-        heartGroup.scale.set(0.15, 0.15, 0.15); // サイズ調整
-        heartGroup.position.set(5, 2, -5); // 画面の右上に配置（X, Y, Z座標）
-        heartGroup.rotation.z = Math.PI;   // 上下反転させて心臓らしい向きに
-        heartGroup.rotation.y = -0.5;      // 少し斜めに向ける
-
-        scene.add(heartGroup); // シーンに追加
-
-        // カメラ位置の調整
-        camera.position.z = 15;
-
-        // 3. アニメーションループ（毎フレーム実行される）
-        let time = 0;
+        // 4. アニメーションループ
+        const clock = new THREE.Clock();
         function animate() {
             requestAnimationFrame(animate);
-            time += 0.015; // 時間を進める
+            const delta = clock.getDelta(); // 前フレームからの経過時間
 
-            // 拍動（スケールのアニメーション）
-            // sin波を使って周期的に大きさを変える。心臓らしい「ドックン」という動きを表現
-            const beat = 1 + Math.sin(time * 2.5) * 0.05 + Math.sin(time * 10) * 0.02 * Math.max(0, Math.sin(time * 2.5));
-            heartGroup.scale.set(0.15 * beat, 0.15 * beat, 0.15 * beat);
+            // モデルがロードされていれば、ミキサーを更新して拍動させる
+            if (mixer) {
+                mixer.update(delta);
+            }
 
-            // 回転（ゆっくり回す）
-            heartGroup.rotation.y += 0.002;
+            // ゆっくりと回転させる（オプション）
+            if (heartModel) {
+                heartModel.rotation.y -= 0.001;
+            }
 
-            // 描画
             renderer.render(scene, camera);
         }
 
-        // 4. ウィンドウサイズ変更への対応
+        // 5. ウィンドウサイズ変更への対応
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // アニメーション開始
         animate();
     </script>
 
