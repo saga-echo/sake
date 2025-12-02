@@ -13,41 +13,18 @@
 
         /* 基本設定 */
         :root { --primary: #38bdf8; --secondary: #2563eb; --dark-bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); }
-        /* bodyから背景色を削除し、gradientに任せることで重なり問題を解決 */
         body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; color: white; overflow-x: hidden; line-height: 1.6; position: relative; }
         a { text-decoration: none; color: inherit; }
 
         /* --- 背景レイヤー設定 --- */
-        
-        /* 1. グラデーション背景 (一番奥) */
         .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
         
-        /* 2. 背景の巨大アイコン透かし (その手前) ★ここを変更 */
         .watermark {
-            position: fixed;
-            z-index: -5;
-            color: white;
-            opacity: 0.06; /* 透明度6% (見えるレベルに調整済) */
-            pointer-events: none; /* マウス操作を邪魔しない */
+            position: fixed; z-index: -5; color: white; opacity: 0.06; pointer-events: none;
         }
+        .watermark-left { bottom: -5vw; left: -5vw; font-size: 40vw; transform: rotate(10deg); }
+        .watermark-right { top: -10vw; right: -10vw; font-size: 45vw; transform: rotate(-15deg); }
 
-        /* 左下：地図/場所アイコン */
-        .watermark-left {
-            bottom: -5vw;
-            left: -5vw;
-            font-size: 40vw; /* 画面幅の40%という巨大サイズ */
-            transform: rotate(10deg); /* 少し傾けてオシャレに */
-        }
-
-        /* 右上：心臓アイコン */
-        .watermark-right {
-            top: -10vw;
-            right: -10vw;
-            font-size: 45vw;
-            transform: rotate(-15deg);
-        }
-
-        /* 3. 動くオーブ (最前面の背景) */
         .orb { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; top: -100px; right: -100px; animation: pulse 8s infinite alternate; pointer-events: none; z-index: -1; }
         @keyframes pulse { 0% { transform: scale(1); opacity: 0.3; } 100% { transform: scale(1.2); opacity: 0.6; } }
 
@@ -57,7 +34,7 @@
         .logo i { color: var(--primary); margin-right: 8px; }
 
         /* メインビジュアル */
-        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; position: relative; }
+        .hero { min-height: 80vh; /* 少し高さを詰めました */ display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 0; position: relative; }
         h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px 0; font-weight: 700; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.05em; }
         .subtitle { font-size: 1.1rem; color: #94a3b8; max-width: 600px; margin-bottom: 40px; }
 
@@ -70,36 +47,36 @@
         .btn-glow { padding: 15px 40px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; font-size: 1rem; }
         .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(56, 189, 248, 0.7); }
 
-        /* カードセクション */
-        .section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 1.5rem; margin-bottom: 40px; border-left: 4px solid var(--primary); padding-left: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .card { background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; }
+        /* セクション共通 */
+        .section { padding: 60px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { font-size: 1.5rem; margin-bottom: 30px; border-left: 4px solid var(--primary); padding-left: 15px; display: flex; align-items: center; gap: 10px; }
+        
+        /* カレンダーセクション (独立させて大きく表示) */
+        .calendar-section { width: 100%; margin-bottom: 40px; }
+        .calendar-container {
+            position: relative;
+            width: 100%;
+            height: 600px; /* ★ここで高さを強制的に確保 */
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .google-calendar {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; border: 0;
+            /* ダークモード化フィルター (全角スペース除去済み) */
+            filter: invert(1) hue-rotate(180deg) contrast(0.9) saturate(0.8);
+        }
+
+        /* 下部のグリッド（アーカイブとお知らせ） */
+        .grid-2-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; height: 100%; }
         .card:hover { transform: translateY(-5px); border-color: rgba(56, 189, 248, 0.5); background: rgba(255, 255, 255, 0.08); }
         .card-icon { font-size: 2rem; color: var(--primary); margin-bottom: 20px; display: inline-block; }
         .card h3 { margin: 0 0 10px 0; font-size: 1.3rem; }
         .card p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px; }
-
-        /* カレンダー埋め込み用デザイン */
-　　　　　.calendar-container {
-    　　　　　position: relative;
-    　　　　　padding-bottom: 75%; /* 正方形に近い比率を確保 */
-    　　　　　height: 0;
-    　　　　　overflow: hidden;
-    　　　　　border-radius: 15px;
-    　　　　　border: 1px solid rgba(255,255,255,0.1);
-　　　　　}
-
-　　　　　.google-calendar {
-    　　　　　position: absolute;
-    　　　　　top: 0;
-    　　　　　left: 0;
-    　　　　　width: 100%;
-    　　　　　height: 100%;
-    　　　　　border: 0;
-    　　　　　/* ★魔法のフィルター：色を反転させてダークモード風にする */
-    　　　　　filter: invert(1) hue-rotate(180deg) contrast(0.9);
-　　　　　}
         
         /* フッター */
         footer { text-align: center; padding: 50px 20px; color: #475569; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); }
@@ -110,8 +87,8 @@
     <div class="bg-gradient"></div>
     <i class="fa-solid fa-map-location-dot watermark watermark-left"></i>
     <i class="fa-solid fa-heart-pulse watermark watermark-right"></i>
-    
     <div class="orb"></div>
+
     <header>
         <div class="logo"><i class="fa-solid fa-heart-pulse"></i> SAGA ECHO HUB</div>
     </header>
@@ -129,38 +106,40 @@
     </section>
 
     <section class="section fade-in delay-3">
-        <div class="section-title">Latest Updates & Resources</div>
         
-        <div class="grid">
-            <div class="card">
-                <i class="fa-regular fa-calendar-check card-icon"></i>
-                <h3>Web Meeting</h3>
-                <p>次回の勉強会予定</p>
-                <div class="calendar-container">
-                    <iframe src="https://calendar.google.com/calendar/embed?src=ucg.saga%40gmail.com&ctz=Asia%2FTokyo" style="border: 0" class="google-calendar" frameborder="0" scrolling="no"></iframe>
-                </div>
+        <div class="calendar-section">
+            <div class="section-title"><i class="fa-regular fa-calendar-check"></i> Schedule / Web Meeting</div>
+            <div class="calendar-container">
+                <iframe src="https://calendar.google.com/calendar/embed?src=ucg.saga%40gmail.com&ctz=Asia%2FTokyo&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0&showTz=0" class="google-calendar" frameborder="0" scrolling="no"></iframe>
             </div>
+        </div>
 
+        <div class="grid-2-col">
             <div class="card">
                 <i class="fa-regular fa-file-pdf card-icon"></i>
                 <h3>Archive</h3>
-                <p>過去の議事録はクラウドに安全に保管されています。</p>
-                <a href="#" style="color:var(--primary); font-weight:bold;">アーカイブ一覧を見る →</a>
+                <p>過去の議事録・資料アーカイブ</p>
+                <div style="margin-top:20px;">
+                    <a href="#" style="color:var(--primary); font-weight:bold; display:flex; align-items:center; gap:5px;">
+                        アーカイブ一覧へ <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
 
             <div class="card">
                 <i class="fa-solid fa-pen-nib card-icon"></i>
                 <h3>Topics</h3>
-                <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:10px;">
-                    <span style="font-size:0.8rem; color:#64748b;">2025.12.02</span><br>
-                    Webサイトを開設しました。
+                <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px; margin-bottom:15px;">
+                    <span style="font-size:0.8rem; color:var(--primary);">2025.12.02</span>
+                    <div style="font-size:0.95rem;">Webサイトを開設しました。</div>
                 </div>
-                <div style="padding-bottom:10px;">
-                    <span style="font-size:0.8rem; color:#64748b;">2025.11.20</span><br>
-                    第5回勉強会のレポートを公開。
+                <div>
+                    <span style="font-size:0.8rem; color:var(--primary);">2025.11.20</span>
+                    <div style="font-size:0.95rem;">第5回勉強会のレポートを公開。</div>
                 </div>
             </div>
         </div>
+
     </section>
 
     <footer>
