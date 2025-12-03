@@ -132,8 +132,8 @@
         heartGroup.position.set(5, -2, -5); 
         heartGroup.rotation.y = -Math.PI / 4;
 
-        // ★修正点1：カメラを遠くに引いて全体が見えるようにする
-        camera.position.z = 18; // 以前の12から18に変更してズームアウト
+        // ★設定済み：カメラを遠くに引いて全体が見えるようにする
+        camera.position.z = 18;
 
         // 2. モデル読み込みマネージャー
         const loader = new THREE.GLTFLoader();
@@ -154,8 +154,7 @@
                 }
             });
 
-            // ★修正点2：外部モデルの拡大率を控えめにする
-            // (以前は50倍にしていましたが、大きすぎる可能性が高いため15倍に抑えました)
+            // ★設定済み：外部モデルの拡大率
             loadedModel.scale.set(15, 15, 15);
             
             heartGroup.add(loadedModel);
@@ -192,20 +191,33 @@
             heartGroup.add(points);
         }
 
-        // 4. アニメーション
-        let time = 0;
+        // 4. アニメーション（★修正：2秒に1回のペース、1回拍動）
+        const clock = new THREE.Clock(); // 正確な時間管理のためにClockを使用
+
         function animate() {
             requestAnimationFrame(animate);
-            time += 0.01;
             
-            // 拍動
+            const elapsedTime = clock.getElapsedTime(); // 経過時間(秒)
+            
+            // 2秒周期
+            const period = 2.0; 
+            const t = elapsedTime % period; 
+
             let beat = 0;
-            const t = time % 1.5;
-            if (t < 0.2) beat = Math.sin(t * Math.PI / 0.2) * 0.15;
-            else if (t > 0.3 && t < 0.5) beat = Math.sin((t - 0.3) * Math.PI / 0.2) * 0.08;
+
+            // 最初の0.4秒間で「ドン」と1回だけ動く
+            if (t < 0.4) {
+                // 正弦波の山を一つ作る
+                beat = Math.sin(t * Math.PI / 0.4) * 0.15;
+            } else {
+                // 残りの1.6秒は静止
+                beat = 0;
+            }
             
             const scale = 1.0 + beat;
             heartGroup.scale.set(scale, scale, scale);
+            
+            // ゆっくり回転し続ける
             heartGroup.rotation.y += 0.002;
 
             renderer.render(scene, camera);
