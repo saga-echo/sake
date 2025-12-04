@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>佐賀県心エコーラーニングハブ | Saga Echocardiography Learning Hub</title>
     
+    <meta name="google-site-verification" content="1nurx5SIjv1gPJDoIUVk-IElgiLxtBJVdUlJ4emsU9E" />
+    
     <meta name="description" content="佐賀県心エコーラーニングハブは、佐賀大学および県内の循環器内科医・技師のための学習・情報共有プラットフォームです。心エコー図検査の技術向上、抄読会、症例検討会の議事録アーカイブなどを提供します。">
     <meta name="keywords" content="佐賀,心エコー,循環器,超音波検査,Saga,Echocardiography,勉強会,医師,技師">
-    
+
     <meta property="og:title" content="佐賀県心エコーラーニングハブ">
     <meta property="og:description" content="心エコーの未来を、佐賀から拓く。医師・技師がつながるための新しいラーニングハブ。">
     <meta property="og:type" content="website">
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ... (styleの中身は以前と同じですので、そのまま残してください) ... */
         * { box-sizing: border-box; }
         :root { --primary: #38bdf8; --secondary: #2563eb; --dark-bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); }
         body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; color: white; overflow-x: hidden; line-height: 1.6; position: relative; background-color: var(--dark-bg); }
@@ -100,12 +102,12 @@
             <div class="card">
                 <i class="fa-solid fa-pen-nib card-icon"></i>
                 <h3>Topics</h3>
-            <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px; margin-bottom:15px;">
-                <span style="font-size:0.8rem; color:var(--primary);">2025.12.02</span>
-                <a href="blog/2025-12-02-opening.html" style="font-size:0.95rem; display:block; transition:0.3s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='white'">
-                    Webサイトを開設しました。 <i class="fa-solid fa-angle-right" style="font-size:0.8em; margin-left:5px;"></i>
-                </a>
-            </div>
+                <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px; margin-bottom:15px;">
+                    <span style="font-size:0.8rem; color:var(--primary);">2025.12.02</span>
+                    <a href="blog/2025-12-02-opening.html" style="font-size:0.95rem; display:block; transition:0.3s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='white'">
+                        Webサイトを開設しました。 <i class="fa-solid fa-angle-right" style="font-size:0.8em; margin-left:5px;"></i>
+                    </a>
+                </div>
                 <div>
                     <span style="font-size:0.8rem; color:var(--primary);">2025.11.20</span>
                     <div style="font-size:0.95rem;">第5回勉強会のレポートを公開。</div>
@@ -142,7 +144,7 @@
         heartGroup.position.set(5, -2, -5); 
         heartGroup.rotation.y = -Math.PI / 4;
 
-        // ★設定済み：カメラを遠くに引いて全体が見えるようにする
+        // カメラ位置（全体が見えるように調整済み）
         camera.position.z = 18;
 
         // 2. モデル読み込みマネージャー
@@ -164,7 +166,7 @@
                 }
             });
 
-            // ★設定済み：外部モデルの拡大率
+            // 外部モデルの拡大率（控えめに設定済み）
             loadedModel.scale.set(15, 15, 15);
             
             heartGroup.add(loadedModel);
@@ -201,33 +203,25 @@
             heartGroup.add(points);
         }
 
-        // 4. アニメーション（★修正：2秒に1回のペース、1回拍動）
-        const clock = new THREE.Clock(); // 正確な時間管理のためにClockを使用
+        // 4. アニメーション（2秒に1回のゆったりした拍動）
+        const clock = new THREE.Clock(); 
 
         function animate() {
             requestAnimationFrame(animate);
             
-            const elapsedTime = clock.getElapsedTime(); // 経過時間(秒)
-            
-            // 2秒周期
+            const elapsedTime = clock.getElapsedTime(); 
             const period = 2.0; 
             const t = elapsedTime % period; 
-
             let beat = 0;
 
-            // 最初の0.4秒間で「ドン」と1回だけ動く
             if (t < 0.4) {
-                // 正弦波の山を一つ作る
                 beat = Math.sin(t * Math.PI / 0.4) * 0.15;
             } else {
-                // 残りの1.6秒は静止
                 beat = 0;
             }
             
             const scale = 1.0 + beat;
             heartGroup.scale.set(scale, scale, scale);
-            
-            // ゆっくり回転し続ける
             heartGroup.rotation.y += 0.002;
 
             renderer.render(scene, camera);
