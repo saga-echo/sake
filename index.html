@@ -18,7 +18,7 @@
     
     <style>
         * { box-sizing: border-box; }
-        :root { --primary: #38bdf8; --secondary: #2563eb; --dark-bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); }
+        :root { --primary: #38bdf8; --secondary: #2563eb; --dark-bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); --gold-highlight: #fbbf24; }
         body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; color: white; overflow-x: hidden; line-height: 1.6; position: relative; background-color: var(--dark-bg); }
         a { text-decoration: none; color: inherit; }
         html { scroll-behavior: smooth; }
@@ -35,38 +35,46 @@
 
         .hero { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 0; position: relative; }
         
-        /* ★変更点：SAKEの文字に「エコースキャン風」のアニメーションを追加 */
         h1 { 
             font-family: 'Montserrat', sans-serif; 
             font-size: clamp(4rem, 10vw, 8rem); 
             margin: 0; 
             font-weight: 700; 
-            /* エコーのビームが走るようなグラデーション */
             background: linear-gradient(90deg, #38bdf8 0%, #ffffff 50%, #38bdf8 100%); 
             background-size: 200% auto;
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
             letter-spacing: 0.05em; 
             line-height: 1.1; 
-            animation: shine 3s linear infinite; /* 光が走るアニメーション */
+            animation: shine 3s linear infinite;
         }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* ★変更点：心電図ラインの装飾 */
         .ecg-divider {
             width: 100%; max-width: 600px; height: 2px; background: rgba(255,255,255,0.1); margin: 20px 0; position: relative;
             display: flex; justify-content: center; align-items: center;
         }
         .ecg-divider::before {
-            content: '\f21e'; /* FontAwesomeの心拍アイコン */
+            content: '\f21e';
             font-family: "Font Awesome 6 Free"; font-weight: 900;
             color: var(--primary); font-size: 1.5rem; background: var(--dark-bg); padding: 0 15px;
-            text-shadow: 0 0 10px var(--primary); /* 光らせる */
+            text-shadow: 0 0 10px var(--primary);
         }
 
-        /* ★変更点：Echocardiographyを強調 */
         .full-name { font-size: clamp(1rem, 2vw, 1.3rem); color: #cbd5e1; font-weight: 300; margin-bottom: 20px; letter-spacing: 0.05em; line-height: 1.5; }
-        .highlight-echo { color: var(--primary); font-weight: 700; text-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+        
+        /* ★変更点：Echocardiographyをさらに強力に強調 */
+        .highlight-echo { 
+            color: var(--gold-highlight); /* ゴールド色に変更 */
+            font-weight: 800; /* より太く */
+            font-size: 1.2em; /* 周囲より大きく */
+            display: inline-block; /* transformを効かせるため */
+            transform: scale(1.05); /* 少し拡大 */
+            /* 強力な二重の発光エフェクト */
+            text-shadow: 
+                0 0 20px rgba(251, 191, 36, 0.6),
+                0 0 40px rgba(251, 191, 36, 0.4);
+        }
 
         .subtitle { font-size: 1.1rem; color: #94a3b8; max-width: 600px; margin-bottom: 40px; }
         
@@ -119,7 +127,7 @@
         </div>
         
         <p class="subtitle fade-in delay-1">
-            心エコーの未来を、佐賀から拓く。<br>医師・技師がつながるための新しいラーニングハブ。
+            心エコーの未来を、佐賀から拓く。<br>医師・技師がつながるためのラーニングハブ。
         </p>
         
         <div class="hero-buttons fade-in delay-2">
