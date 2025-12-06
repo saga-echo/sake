@@ -30,8 +30,28 @@
 
         header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        .logo { display: flex; align-items: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: 2px; color: white; }
-        .sake-icon-img { width: 40px; height: auto; margin-right: 15px; }
+        /* ★変更点：ロゴ周りのスタイル調整 */
+        .logo { 
+            display: flex; 
+            align-items: center; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 700; 
+            font-size: 1.5rem; 
+            letter-spacing: 2px; 
+            color: white; 
+        }
+        /* 2つのアイコン共通スタイル（サイズと色合いの統一） */
+        .logo-icon { 
+            height: 45px; /* 高さを揃える */
+            width: auto;  /* 幅は自動 */
+            /* 画像を白くするフィルター（黒いアイコン前提） */
+            /* もし元の画像がカラーで、それを活かしたい場合はこの行を削除してください */
+            filter: invert(1) brightness(1.2); 
+        }
+        /* 左のアイコン（心エコー図） */
+        .logo-icon.left { margin-right: 15px; }
+        /* 右のアイコン（お酒） */
+        .logo-icon.right { margin-left: 15px; }
 
         .hero { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 0; position: relative; }
         
@@ -63,14 +83,12 @@
 
         .full-name { font-size: clamp(1rem, 2vw, 1.3rem); color: #cbd5e1; font-weight: 300; margin-bottom: 20px; letter-spacing: 0.05em; line-height: 1.5; }
         
-        /* ★変更点：Echocardiographyをさらに強力に強調 */
         .highlight-echo { 
-            color: var(--gold-highlight); /* ゴールド色に変更 */
-            font-weight: 800; /* より太く */
-            font-size: 1.2em; /* 周囲より大きく */
-            display: inline-block; /* transformを効かせるため */
-            transform: scale(1.05); /* 少し拡大 */
-            /* 強力な二重の発光エフェクト */
+            color: var(--gold-highlight); 
+            font-weight: 800; 
+            font-size: 1.2em; 
+            display: inline-block; 
+            transform: scale(1.05); 
             text-shadow: 
                 0 0 20px rgba(251, 191, 36, 0.6),
                 0 0 40px rgba(251, 191, 36, 0.4);
@@ -111,8 +129,9 @@
 
     <header>
         <div class="logo">
-            <img src="images/sake-logo.png" alt="SAKE Logo" class="sake-icon-img">
+            <img src="images/4ch.png" alt="4CH View" class="logo-icon left">
             SAKE
+            <img src="images/sake-logo.png" alt="SAKE Logo" class="logo-icon right">
         </div>
     </header>
 
