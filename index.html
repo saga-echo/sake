@@ -30,28 +30,10 @@
 
         header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        /* ヘッダーロゴを元に戻す */
         .logo { display: flex; align-items: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: 2px; color: white; }
         .sake-icon-img { width: 40px; height: auto; margin-right: 15px; }
 
-        /* ★変更点：ヒーローセクションの背景に透かしを追加 */
-        .hero { 
-            min-height: 80vh; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
-            padding: 100px 20px 0; 
-            position: relative;
-            /* ここから背景設定 */
-            background-image: url('./images/echo-bg.png'); /* 画像パス */
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: 60%; /* 画像の大きさ（調整可能） */
-            /* 画像を白くして透明度を下げるフィルター */
-            /* もし元の画像が黒いシルエットなら invert(1) を残す。白い画像なら削除する */
-            filter: invert(1) opacity(0.1); /* 透明度0.1でうっすら表示 */
-        }
-        /* 背景フィルターが子要素（テキスト）にもかかってしまうのを防ぐため、子要素のフィルターをリセット */
-        .hero > * { filter: invert(0) opacity(1); z-index: 1; }
-
+        .hero { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 0; position: relative; }
         
         h1 { 
             font-family: 'Montserrat', sans-serif; 
@@ -81,12 +63,14 @@
 
         .full-name { font-size: clamp(1rem, 2vw, 1.3rem); color: #cbd5e1; font-weight: 300; margin-bottom: 20px; letter-spacing: 0.05em; line-height: 1.5; }
         
+        /* ★変更点：Echocardiographyをさらに強力に強調 */
         .highlight-echo { 
-            color: var(--gold-highlight); 
-            font-weight: 800; 
-            font-size: 1.2em; 
-            display: inline-block; 
-            transform: scale(1.05); 
+            color: var(--gold-highlight); /* ゴールド色に変更 */
+            font-weight: 800; /* より太く */
+            font-size: 1.2em; /* 周囲より大きく */
+            display: inline-block; /* transformを効かせるため */
+            transform: scale(1.05); /* 少し拡大 */
+            /* 強力な二重の発光エフェクト */
             text-shadow: 
                 0 0 20px rgba(251, 191, 36, 0.6),
                 0 0 40px rgba(251, 191, 36, 0.4);
@@ -172,4 +156,124 @@
                 <p>過去の議事録・資料アーカイブ</p>
                 <div style="margin-top:20px;">
                     <a href="https://drive.google.com/drive/folders/1Ma9YP9mtl5WAPd7nxfMdmD344eaJsha6" target="_blank" style="color:var(--primary); font-weight:bold; display:flex; align-items:center; gap:5px;">
-                        アーカイブ一覧へ
+                        アーカイブ一覧へ <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <i class="fa-solid fa-pen-nib card-icon"></i>
+                <h3>Topics</h3>
+                
+                <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px; margin-bottom:15px;">
+                    <span style="font-size:0.8rem; color:var(--primary);">2025.12.18</span>
+                    <div style="font-size:0.95rem; margin-bottom:5px;">17:30〜 第25回LVEF目合わせ＠saga</div>
+                    <a href="#schedule" style="font-size:0.85rem; color:#cbd5e1; display:flex; align-items:center; gap:5px; text-decoration:underline;">
+                        <i class="fa-solid fa-arrow-up"></i> Teams会議のリンクは<br>上のカレンダーからご確認ください
+                    </a>
+                </div>
+
+                <div>
+                    <span style="font-size:0.8rem; color:var(--primary);">2025.12.02</span>
+                    <a href="blog/2025-12-02-opening.html" style="font-size:0.95rem; display:block; transition:0.3s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='white'">
+                        Webサイトを開設しました。 <i class="fa-solid fa-angle-right" style="font-size:0.8em; margin-left:5px;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2025 SAKE (Saga Association for Knowledge of Echocardiography).<br>
+        Designed for Medical Professionals.
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            color: 0x38bdf8, size: 0.05, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending
+        });
+        const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.15 });
+
+        const heartGroup = new THREE.Group();
+        scene.add(heartGroup);
+        heartGroup.position.set(5, -2, -5); 
+        heartGroup.rotation.y = -Math.PI / 4;
+        camera.position.z = 18;
+
+        const loader = new THREE.GLTFLoader();
+        loader.load('./heart.glb', (gltf) => {
+            const loadedModel = gltf.scene;
+            loadedModel.traverse((child) => {
+                if (child.isMesh) {
+                    const wireGeom = new THREE.WireframeGeometry(child.geometry);
+                    const wireframe = new THREE.LineSegments(wireGeom, wireframeMaterial);
+                    child.add(wireframe);
+                    const points = new THREE.Points(child.geometry, particlesMaterial);
+                    child.add(points);
+                    child.material.visible = false; 
+                }
+            });
+            loadedModel.scale.set(15, 15, 15);
+            heartGroup.add(loadedModel);
+        }, undefined, (error) => {
+            createProceduralHeart();
+        });
+
+        function createProceduralHeart() {
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const numPoints = 3000;
+            for (let i = 0; i < numPoints; i++) {
+                const phi = Math.acos( -1 + ( 2 * Math.random() ) );
+                const theta = Math.sqrt( numPoints * Math.PI ) * phi;
+                let x = Math.cos(theta) * Math.sin(phi);
+                let y = Math.sin(theta) * Math.sin(phi);
+                let z = Math.cos(phi);
+                let stretch = 1.0 - (z * 0.5); 
+                x *= stretch * 1.2; y *= stretch * 0.8; z *= 1.5;
+                if (z > 0.5) { const indent = Math.abs(x) * 0.5; z -= indent * 0.5; }
+                const noise = 0.95 + Math.random() * 0.1;
+                vertices.push(x * 3 * noise, y * 3 * noise, z * 3 * noise);
+            }
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            const points = new THREE.Points(geometry, particlesMaterial);
+            points.rotation.x = -Math.PI / 2;
+            points.rotation.z = Math.PI / 10;
+            heartGroup.add(points);
+        }
+
+        const clock = new THREE.Clock(); 
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime(); 
+            const period = 2.0; 
+            const t = elapsedTime % period; 
+            let beat = 0;
+            if (t < 0.4) { beat = Math.sin(t * Math.PI / 0.4) * 0.15; }
+            else { beat = 0; }
+            
+            const scale = 1.0 + beat;
+            heartGroup.scale.set(scale, scale, scale);
+            heartGroup.rotation.y += 0.002;
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        animate();
+    </script>
+
+</body>
+</html>
