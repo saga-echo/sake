@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webサイトを開設しました | Saga Echocardiography Learning Hub</title>
+    <title>Webサイトを開設しました | SAKE</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -13,20 +13,21 @@
         body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; color: white; overflow-x: hidden; line-height: 1.8; background-color: var(--dark-bg); }
         a { text-decoration: none; color: inherit; }
 
-        /* 背景設定（トップページと同じ） */
         .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -20; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -15; pointer-events: none; opacity: 0.5; /* 文字を読みやすくするため少し薄く */ }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -15; pointer-events: none; opacity: 0.5; }
         .orb { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; top: -100px; right: -100px; animation: pulse 8s infinite alternate; pointer-events: none; z-index: -10; }
 
-        /* ヘッダー */
         header { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .logo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: white; }
-        .logo i { color: var(--primary); margin-right: 8px; }
+        
+        /* ロゴ設定 */
+        .logo { display: flex; align-items: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: 2px; color: white; transition: 0.3s; }
+        .logo:hover { opacity: 0.8; }
+        /* アイコン画像のスタイル（トップページと同じ比率） */
+        .sake-icon-img { width: 40px; height: auto; margin-right: 15px; }
 
-        /* 記事コンテナ */
         .article-container {
             max-width: 800px; margin: 120px auto 60px; padding: 40px;
-            background: rgba(15, 23, 42, 0.8); /* 読みやすくするための背景色 */
+            background: rgba(15, 23, 42, 0.8);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
             backdrop-filter: blur(10px);
         }
@@ -39,7 +40,6 @@
         .article-body h2 { color: white; border-left: 4px solid var(--primary); padding-left: 15px; margin-top: 40px; margin-bottom: 20px; font-size: 1.5rem; }
         .article-body p { margin-bottom: 20px; }
 
-        /* 戻るボタン */
         .back-btn { display: inline-block; margin-top: 40px; padding: 10px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; transition: 0.3s; font-size: 0.9rem; }
         .back-btn:hover { background: white; color: var(--dark-bg); }
 
@@ -52,7 +52,10 @@
     <div id="canvas-container"></div> <div class="orb"></div>
 
     <header>
-        <a href="../index.html" class="logo"><i class="fa-solid fa-heart-pulse"></i> SAGA ECHO HUB</a>
+        <a href="../index.html" class="logo">
+            <img src="../images/sake-logo.png" alt="SAKE Logo" class="sake-icon-img">
+            SAKE
+        </a>
     </header>
 
     <article class="article-container">
@@ -63,7 +66,7 @@
 
         <div class="article-body">
             <p>はじめまして。佐賀大学循環器内科の鍋嶋です。</p>
-            <p>この度、佐賀県内外の心エコー図検査の技術向上と、施設間の情報共有を目的として、本Webサイト「Saga Association for Knowledge of Echocardiography」を立ち上げました。</p>
+            <p>この度、佐賀県内外の心エコー図検査の技術向上と、施設間の情報共有を目的として、本Webサイト「Saga Association for Knowledge of Echocardiography (SAKE)」を立ち上げました。</p>
 
             <h2>本サイトの目的</h2>
             <p>日常臨床で遭遇する判断に迷う症例の共有や、最新のガイドライン・論文の抄読会資料などをアーカイブ化し、いつでも学べる環境を提供したいと考えています。</p>
@@ -76,14 +79,12 @@
     </article>
 
     <footer>
-        &copy; 2025 Saga Echocardiography Learning Hub.
+        &copy; 2025 SAKE (Saga Association for Knowledge of Echocardiography).
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        // --- 簡易版3D背景スクリプト (記事ページ用) ---
-        // ※記事が読みやすいよう、アニメーション等は少し控えめに設定しています
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -93,11 +94,11 @@
         const particlesMaterial = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.05, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending });
         const heartGroup = new THREE.Group();
         scene.add(heartGroup);
-        heartGroup.position.set(6, -3, -10); // 記事の邪魔にならないよう右奥に配置
+        heartGroup.position.set(6, -3, -10);
         heartGroup.rotation.y = -Math.PI / 4;
         camera.position.z = 15;
 
-        // 生成ロジックのみ使用（読み込みエラー回避のため）
+        // 生成ロジック（トップページと同じ形状）
         const geometry = new THREE.BufferGeometry();
         const vertices = [];
         const numPoints = 2000;
@@ -117,7 +118,7 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            heartGroup.rotation.y += 0.001; // ゆったり回転のみ
+            heartGroup.rotation.y += 0.001; 
             renderer.render(scene, camera);
         }
         window.addEventListener('resize', () => {
